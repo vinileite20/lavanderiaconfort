@@ -1,0 +1,372 @@
+/* Reseta margens padrão e define uma fonte mais moderna e limpa */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Fundo da tela: Adicionando um degradê (gradient) suave */
+body {
+    /* Linear-gradient cria uma transição de cores. Do azul claro para um cinza bem clarinho */
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* O cartão de login: Mais moderno, com bordas arredondadas e sombra suave */
+.login-card {
+    background-color: #ffffff; /* Fundo branco limpo */
+    padding: 40px;
+    width: 380px;
+    border-radius: 12px; /* Arredonda as quinas do cartão */
+    /* Box-shadow cria a sombra. Valores: eixo-X, eixo-Y, desfoque, tamanho, cor(rgba com transparência) */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); 
+}
+
+/* Centraliza o logo e o título */
+.header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.logo-icon {
+    font-size: 45px;
+    color: #4a90e2; /* Azul moderno para o ícone da lavanderia */
+    margin-bottom: 15px;
+}
+
+h2 {
+    color: #333333;
+    font-weight: 600;
+    font-size: 24px;
+}
+
+/* Estilo dos campos de entrada */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #555555;
+    font-weight: 500;
+}
+
+/* Estilizando a caixa de texto */
+.input-group input[type="text"],
+.password-container {
+    width: 100%;
+    border: 2px solid #e1e1e1; /* Borda cinza clara */
+    border-radius: 8px; /* Arredonda os campos de texto */
+    background-color: #f9f9f9;
+    transition: all 0.3s ease; /* Faz a mudança de cor ser suave (animada) */
+}
+
+.input-group input[type="text"] {
+    padding: 12px 15px;
+    outline: none;
+}
+
+/* Efeito de FOCO: Quando o usuário clica dentro do campo para digitar */
+.input-group input[type="text"]:focus,
+.password-container:focus-within {
+    border-color: #4a90e2; /* A borda fica azul para destacar */
+    background-color: #ffffff;
+}
+
+/* Ajustes no container da senha para o olho ficar perfeito */
+.password-container {
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* Não deixa nada vazar para fora das bordas arredondadas */
+}
+
+.password-container input {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: none; /* Remove a borda padrão do input para usar a borda do container */
+    background: transparent;
+    outline: none;
+}
+
+#togglePassword {
+    padding: 12px 15px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+#togglePassword:hover {
+    color: #333; /* Escurece o olhinho ao passar o mouse */
+}
+
+/* Checkbox "Me lembrar" */
+.remember-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Botão de Entrar: Maior, mais chamativo e com animação */
+.btn-entrar {
+    width: 100%;
+    padding: 14px;
+    background-color: #21bce4; /* Azul lavanderia */
+    color: white;
+    border: none;
+    border-radius: 8px; /* Arredonda o botão */
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.1s; /* Anima a cor e o clique */
+}
+
+/* Quando passa o mouse em cima do botão */
+.btn-entrar:hover {
+    background-color: #1b3a57; /* Um azul mais escuro */
+}
+
+/* Quando o botão é clicado (afunda um pouquinho) */
+.btn-entrar:active {
+    transform: scale(0.98); 
+}
+/* =========================================
+   ESTILOS DO DASHBOARD (PAINEL PRINCIPAL)
+   ========================================= */
+
+/* O container que segura a tela inteira */
+.dashboard-container {
+    display: flex; /* Coloca o menu e o conteúdo lado a lado */
+    height: 100vh; /* Ocupa 100% da altura da tela */
+    background-color: #f4f6f9; /* Um cinza muito clarinho para o fundo */
+}
+
+/* O Menu Lateral (Sidebar) */
+.sidebar {
+    width: 250px; /* Largura fixa do menu */
+    background-color: #ffffff;
+    border-right: 1px solid #e1e1e1; /* Uma linha sutil separando do conteúdo */
+    display: flex;
+    flex-direction: column; /* Coloca os itens do menu um embaixo do outro */
+    padding-top: 20px;
+}
+
+.sidebar-logo {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #4a90e2;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.sidebar-logo i {
+    margin-right: 10px;
+}
+
+/* Os botões do menu */
+.menu-item {
+    padding: 15px 25px;
+    color: #666666;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre o ícone e o texto */
+    transition: all 0.3s;
+}
+/* Quando passa o mouse no menu ou quando ele está ativo */
+.menu-item:hover, .menu-item.ativo {
+    background-color: #f0fbff; /* Um fundo azul beeeem clarinho */
+    color: #21bce4; /* Azul claro do seu logo */
+    border-left: 4px solid #21bce4; /* Barrinha azul claro na esquerda */
+}
+
+/* A área da direita (Conteúdo Principal) */
+.main-content {
+    flex: 1; /* Ocupa todo o resto do espaço que sobrou da tela */
+    padding: 30px;
+    overflow-y: auto; /* Se o conteúdo for grande, cria uma barra de rolagem só aqui */
+}
+
+/* A barra superior (Top Bar) com o nome do usuário */
+.top-bar {
+    background-color: #ffffff;
+    padding: 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.user-info {
+    font-weight: bold;
+    color: #333;
+}
+/* =========================================
+   CARDS DE RESUMO (Baseado no Vídeo)
+   ========================================= */
+.cards-grid {
+    display: grid;
+    /* Isso faz os cards se ajustarem sozinhos. Em telas grandes ficam 4 lado a lado */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.summary-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border: 1px solid #f0f0f0;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+/* Cores dos ícones iguais ao vídeo (roxo, azul, etc) */
+.icon-purple { background: #f3e8ff; color: #9333ea; }
+.icon-blue { background: #e0f2fe; color: #0284c7; }
+.icon-orange { background: #ffedd5; color: #ea580c; }
+.icon-green { background: #dcfce7; color: #16a34a; }
+
+.card-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 5px;
+}
+
+.card-trend {
+    font-size: 13px;
+    font-weight: 500;
+}
+.trend-up { color: #16a34a; } /* Verde para positivo */
+.trend-down { color: #dc2626; } /* Vermelho para negativo */
+
+
+/* =========================================
+   TABELAS MODERNAS
+   ========================================= */
+.table-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border: 1px solid #f0f0f0;
+    overflow-x: auto;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.table-header h3 {
+    color: #1f2937;
+    font-size: 18px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+table th {
+    color: #6b7280;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+table td {
+    color: #374151;
+    font-size: 14px;
+}
+
+/* Status Bonitinhos (Pílulas) */
+.status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+/* Status da Linha de Produção */
+.status-esperando { background: #fef08a; color: #854d0e; } /* Amarelo */
+.status-lavando { background: #e0f2fe; color: #0284c7; } /* Azul */
+.status-lavado { background: #dcfce7; color: #16a34a; } /* Verde */
+.status-secando { background: #ffedd5; color: #c2410c; } /* Laranja Quente (Secadora) */
+/* =========================================
+   ESTILOS DA JANELA FLUTUANTE (MODAL)
+   ========================================= */
+.modal-fundo {
+    display: none; /* Fica invisível por padrão */
+    position: fixed;
+    z-index: 9999; /* Fica por cima de tudo */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Preto com 60% de transparência */
+}
+
+.modal-caixa {
+    background-color: #fff;
+    margin: 5% auto; /* Fica no meio da tela */
+    padding: 25px;
+    border-radius: 10px;
+    width: 450px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    border-top: 5px solid #ef4444; /* Borda vermelha bonitona */
+}
+
+.modal-fechar {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: -10px;
+}
+
+.modal-fechar:hover {
+    color: #333;
+}

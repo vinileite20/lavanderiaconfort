@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Lavanderia</title>
+    <!-- Conectando nosso novo visual moderno -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Ícones do FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="login-card">
+        
+        <div class="header">
+            <i class="fa-solid fa-jug-detergent logo-icon"></i>
+            <h2>Lavanderia</h2>
+        </div>
+
+        <!-- Formulário já configurado para enviar os dados para o PHP -->
+        <form id="loginForm" action="login.php" method="POST">
+            
+            <div class="input-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="usuario" placeholder="Admin" required>
+            </div>
+
+            <div class="input-group">
+                <label for="senha">Senha:</label>
+                <div class="password-container">
+                    <input type="password" id="senha" name="senha" placeholder="Admin2026" required>
+                    <i class="fa-regular fa-eye" id="togglePassword"></i>
+                </div>
+            </div>
+
+            <div class="remember-group">
+                <input type="checkbox" id="lembrar" checked>
+                <label for="lembrar">Me lembrar</label>
+            </div>
+
+            <!-- Aqui está o nosso único botão de Entrar! -->
+            <button type="submit" class="btn-entrar">Entrar</button>
+        </form>
+
+    </div>
+
+    <!-- Conectando o script do olhinho da senha -->
+    <script src="script.js"></script>
+    <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('erro')) {
+        alert("Usuário ou Senha incorretos!");
+    }
+</script>
+</body>
+</html>
