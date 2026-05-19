@@ -19,51 +19,68 @@ $json_servicos = json_encode($lista_servicos);
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo Pedido - Lavanderia</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .linha-servico { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .linha-servico select { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 5px; outline: none; font-size: 15px; }
-        .linha-servico input { width: 100px; padding: 12px; border: 1px solid #ccc; border-radius: 5px; text-align: center; outline: none; font-size: 15px; }
+        .linha-servico { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; flex-wrap: wrap; }
+        .linha-servico select { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 5px; outline: none; font-size: 15px; min-width: 200px; box-sizing: border-box; }
+        .linha-servico input { width: 100px; padding: 12px; border: 1px solid #ccc; border-radius: 5px; text-align: center; outline: none; font-size: 15px; box-sizing: border-box; }
         .btn-remover { color: #ef4444; cursor: pointer; font-size: 20px; border: none; background: none; padding: 5px; }
         .resumo-totais { border-top: 2px solid #e2e8f0; padding-top: 20px; margin-top: 20px; font-weight: bold; font-size: 16px; color: #333; }
         .linha-total { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .input-group select, .input-group input, .input-group textarea { box-sizing: border-box; }
     </style>
 </head>
 <body style="display: block;">
     <div class="dashboard-container">
-        <?php $pagina_atual = basename($_SERVER['PHP_SELF']); ?>
-        <div class="sidebar">
+        
+        <div class="fundo-escuro-menu" id="fundoMenu" onclick="fecharMenuMobile()"></div>
+
+        <?php 
+            $pagina_atual = 'novo_pedido.php'; 
+            $ehAdmin = ($_SESSION['cargo_usuario'] == 'Administrador');
+        ?>
+        <div class="sidebar" id="menuSidebar">
             <div class="sidebar-logo">
-                <img src="logo.png" alt="Lavanderia" style="max-width: 160px; height: auto;">
+                <img src="logo.png" alt="Lavanderia" style="max-width: 140px; height: auto;">
+                <button class="btn-fechar-menu" onclick="fecharMenuMobile()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <a href="painel.php" class="menu-item <?php echo ($pagina_atual == 'painel.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-house"></i> Tela Inicial</a>
-            <a href="fila.php" class="menu-item <?php echo ($pagina_atual == 'fila.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-list-ol"></i> Fila de Produção</a>
-            <a href="novo_pedido.php" class="menu-item <?php echo ($pagina_atual == 'novo_pedido.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-file-lines"></i> Novo Pedido</a>
-            <a href="clientes.php" class="menu-item <?php echo ($pagina_atual == 'clientes.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-users"></i> Clientes</a>
-            <a href="servicos.php" class="menu-item <?php echo ($pagina_atual == 'servicos.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-tag"></i> Serviços</a>
-            <a href="financeiro.php" class="menu-item <?php echo ($pagina_atual == 'financeiro.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-chart-line"></i> Financeiro</a>
-            <a href="funcionarios.php" class="menu-item"><i class="fa-solid fa-id-card"></i> Funcionários</a>
+            
+            <a href="painel.php" class="menu-item"><i class="fa-solid fa-house"></i> Tela Inicial</a>
+            <a href="fila.php" class="menu-item"><i class="fa-solid fa-list-ol"></i> Fila de Produção</a>
+            <a href="novo_pedido.php" class="menu-item ativo"><i class="fa-solid fa-file-lines"></i> Novo Pedido</a>
+            <a href="clientes.php" class="menu-item"><i class="fa-solid fa-users"></i> Clientes</a>
+            <a href="servicos.php" class="menu-item"><i class="fa-solid fa-tag"></i> Serviços</a>
+            
+            <?php if ($ehAdmin): ?>
+                <a href="funcionarios.php" class="menu-item"><i class="fa-solid fa-id-card"></i> Funcionários</a>
+                <a href="financeiro.php" class="menu-item"><i class="fa-solid fa-chart-line"></i> Financeiro</a>
+            <?php endif; ?>
+            
             <div style="flex-grow: 1;"></div>
             <a href="logout.php" class="menu-item" style="color: #d32f2f;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
         </div>
 
         <div class="main-content">
             <div class="top-bar">
+                <button class="btn-menu-mobile" onclick="abrirMenuMobile()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
                 <h2>Novo Pedido</h2>
             </div>
 
-            <div class="table-container" style="padding: 30px; margin-top: 20px;">
+            <div class="table-container" style="padding: 20px; margin-top: 20px;">
                 <form action="salvar_pedido.php" method="POST">
                     
-                    <div style="display: flex; gap: 20px; margin-bottom: 25px;">
-                        <div class="input-group" style="flex: 1;">
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+                        <div class="input-group">
                             <label>Funcionário Responsável:</label>
                             <input type="text" name="funcionario" value="<?php echo $_SESSION['usuario_logado']; ?>" readonly style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; background: #f1f5f9; color: #666; outline: none;">
                         </div>
 
-                        <div class="input-group" style="flex: 2;">
+                        <div class="input-group">
                             <div style="display: flex; justify-content: space-between;">
                                 <label>Cliente:</label>
                                 <a href="clientes.php" style="color: #0284c7; text-decoration: none; font-size: 14px; font-weight: bold;">+ Novo Cliente</a>
@@ -72,14 +89,13 @@ $json_servicos = json_encode($lista_servicos);
                                 <option value="">Selecione o cliente...</option>
                                 <?php 
                                 while($cli = $clientes->fetch_assoc()) { 
-                                    // Mágica para formatar o número do telefone
                                     $tel = preg_replace("/\D/", "", $cli['telefone']);
                                     if(strlen($tel) == 11) {
                                         $telFormatado = sprintf("(%s) %s-%s", substr($tel, 0, 2), substr($tel, 2, 5), substr($tel, 7));
                                     } elseif(strlen($tel) == 10) {
                                         $telFormatado = sprintf("(%s) %s-%s", substr($tel, 0, 2), substr($tel, 2, 4), substr($tel, 6));
                                     } else {
-                                        $telFormatado = $cli['telefone']; // Se o número for muito doido, mostra como está
+                                        $telFormatado = $cli['telefone'];
                                     }
                                     echo "<option value='".$cli['id']."'>".$cli['nome']." - ".$telFormatado."</option>"; 
                                 } 
@@ -92,12 +108,12 @@ $json_servicos = json_encode($lista_servicos);
                     <div id="lista-servicos">
                         </div>
                     
-                    <button type="button" onclick="adicionarLinha()" style="width: auto; padding: 10px 20px; background: #f1f5f9; color: #0284c7; border: 2px dashed #0284c7; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 30px;">
+                    <button type="button" onclick="adicionarLinha()" style="width: 100%; padding: 10px 20px; background: #f1f5f9; color: #0284c7; border: 2px dashed #0284c7; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 30px;">
                         <i class="fa-solid fa-plus"></i> Adicionar Outro Serviço
                     </button>
 
-                    <div style="display: flex; gap: 20px; margin-bottom: 25px;">
-                        <div class="input-group" style="flex: 1;">
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+                        <div class="input-group">
                             <label>Método de Pagamento:</label>
                             <select name="metodo_pagamento" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; outline: none; font-size: 15px;">
                                 <option value="Dinheiro">Dinheiro</option>
@@ -106,7 +122,7 @@ $json_servicos = json_encode($lista_servicos);
                                 <option value="Pendente">Ainda não pagou (Pendente)</option>
                             </select>
                         </div>
-                        <div class="input-group" style="flex: 1;">
+                        <div class="input-group">
                             <label>Desconto (R$):</label>
                             <input type="text" name="desconto" id="inputDesconto" value="0,00" oninput="formatarMoeda(this); calcularTotal();" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; text-align: right; outline: none; font-size: 15px;">
                         </div>
@@ -114,7 +130,7 @@ $json_servicos = json_encode($lista_servicos);
 
                     <div class="input-group" style="margin-bottom: 20px;">
                         <label>Observação / Preferências (Opcional):</label>
-                        <textarea name="obs" rows="3" placeholder="Ex: Lavar separado, cuidado com a gola..." style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; outline: none; font-size: 15px;"></textarea>
+                        <textarea name="obs" rows="3" placeholder="Ex: Lavar separado..." style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; outline: none; font-size: 15px;"></textarea>
                     </div>
 
                     <div class="resumo-totais">
@@ -128,7 +144,7 @@ $json_servicos = json_encode($lista_servicos);
                     <input type="hidden" name="valor_total_escondido" id="valorTotalEscondido" value="0">
 
                     <button type="submit" class="btn-entrar" style="width: 100%; margin-top: 25px; padding: 15px; font-size: 18px;">
-                        <i class="fa-solid fa-check"></i> Finalizar e Criar Pedido
+                        <i class="fa-solid fa-check"></i> Criar Pedido
                     </button>
                 </form>
             </div>
@@ -138,7 +154,6 @@ $json_servicos = json_encode($lista_servicos);
     <script>
         const servicosDB = <?php echo $json_servicos; ?>;
         
-        // A MÁSCARA DE DINHEIRO
         function formatarMoeda(campo) {
             var valor = campo.value.replace(/\D/g, ''); 
             if (valor === '') { campo.value = '0,00'; return; }
@@ -153,7 +168,6 @@ $json_servicos = json_encode($lista_servicos);
             
             let opcoes = `<option value="">Selecione o serviço</option>`;
             servicosDB.forEach(s => { 
-                // Formata o preço no dropdown também
                 let precoFmt = parseFloat(s.preco).toFixed(2).replace('.', ',');
                 opcoes += `<option value="${s.nome_servico}" data-preco="${s.preco}">${s.nome_servico} (R$ ${precoFmt})</option>`; 
             });
@@ -192,7 +206,6 @@ $json_servicos = json_encode($lista_servicos);
                 totalServicos += (precoItem * qtd);
             });
 
-            // Converte a máscara do desconto (ex: 5,00) de volta para número do computador (5.00)
             let descontoStr = document.getElementById('inputDesconto').value.replace('.', '').replace(',', '.');
             let descontoFormatado = parseFloat(descontoStr);
             if(isNaN(descontoFormatado)) descontoFormatado = 0;
@@ -207,8 +220,18 @@ $json_servicos = json_encode($lista_servicos);
             document.getElementById('valorTotalEscondido').value = totalFinal;
         }
 
-        // Abre já com 1 serviço engatilhado
         window.onload = adicionarLinha;
+
+        // JS DO MENU MOBILE
+        function abrirMenuMobile() {
+            document.getElementById('menuSidebar').classList.add('aberto');
+            document.getElementById('fundoMenu').classList.add('ativo');
+        }
+
+        function fecharMenuMobile() {
+            document.getElementById('menuSidebar').classList.remove('aberto');
+            document.getElementById('fundoMenu').classList.remove('ativo');
+        }
     </script>
 </body>
 </html>

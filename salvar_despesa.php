@@ -1,21 +1,23 @@
 <?php
 session_start();
-if (!isset($_SESSION['usuario_logado'])) { header("Location: index.html"); exit; }
+if (!isset($_SESSION['usuario_logado']) || $_SESSION['cargo_usuario'] != 'Administrador') { 
+    header("Location: index.html"); 
+    exit; 
+}
 require_once 'conexao.php';
 
 $descricao = $_POST['descricao'];
 $categoria = $_POST['categoria'];
-$data = $_POST['data_despesa'];
+$data_despesa = $_POST['data_despesa'];
 
-// Transforma o 150,00 da tela em 150.00 para o banco de dados
-$valor = str_replace(',', '.', $_POST['valor']);
+// Converte a máscara "50,00" para o padrão do banco de dados "50.00"
+$valor = str_replace('.', '', $_POST['valor']); // Tira os pontos se houver milhar
+$valor = str_replace(',', '.', $valor);         // Troca a vírgula por ponto
 
-$sql = "INSERT INTO despesas (descricao, categoria, valor, data_despesa) VALUES ('$descricao', '$categoria', '$valor', '$data')";
+$sql = "INSERT INTO despesas (descricao, categoria, valor, data_despesa) VALUES ('$descricao', '$categoria', '$valor', '$data_despesa')";
+$conexao->query($sql);
 
-if ($conexao->query($sql) === TRUE) {
-    header("Location: financeiro.php");
-    exit;
-} else {
-    echo "Erro ao salvar despesa: " . $conexao->error;
-}
+// Volta pro financeiro
+header("Location: financeiro.php");
+exit;
 ?>

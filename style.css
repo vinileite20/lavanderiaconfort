@@ -370,3 +370,119 @@ table td {
 .modal-fechar:hover {
     color: #333;
 }
+/* =========================================================
+   RESPONSIVIDADE PARA CELULARES - MENU GAVETA (TIPO APP)
+   ========================================================= */
+
+/* Esconde os botões do celular quando estiver no Computador */
+.btn-menu-mobile, .btn-fechar-menu, .fundo-escuro-menu {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        display: block !important;
+    }
+
+    /* 1. O Fundo Escuro que fica atrás do menu */
+    .fundo-escuro-menu {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 9998;
+    }
+    .fundo-escuro-menu.ativo {
+        display: block;
+    }
+
+    /* 2. O Menu Lateral (Fica escondido para fora da tela na esquerda) */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -300px !important; /* Escondido */
+        width: 280px !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: #fff !important;
+        z-index: 9999 !important;
+        transition: left 0.3s ease-in-out !important; /* Animação de deslizar */
+        border-right: 1px solid #e2e8f0 !important;
+        overflow-y: auto !important;
+        padding: 20px 15px !important;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+    }
+
+    /* Classe que o JavaScript vai usar para empurrar o menu pra dentro da tela */
+    .sidebar.aberto {
+        left: 0 !important; 
+    }
+
+    .sidebar-logo {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 30px !important;
+        width: 100%;
+    }
+
+    /* 3. Botões do Menu Mobile */
+    .btn-menu-mobile {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 26px;
+        color: #334155;
+        cursor: pointer;
+        padding: 0 15px 0 0;
+    }
+
+    .btn-fechar-menu {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: #94a3b8;
+        cursor: pointer;
+    }
+
+    /* 4. Organiza os links dentro do menu */
+    .menu-item {
+        flex-direction: row !important;
+        justify-content: flex-start !important;
+        padding: 15px !important;
+        margin-bottom: 5px !important;
+        font-size: 16px !important;
+        border-radius: 8px !important;
+    }
+
+    /* 5. Ajustes na Tela Principal */
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;
+    }
+
+    .top-bar {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        height: auto !important;
+        margin-bottom: 20px !important;
+    }
+
+    .top-bar h2 { font-size: 20px; margin: 0; }
+    
+    /* Esconde o nome do usuário no celular para economizar espaço no topo */
+    .user-info { display: none !important; }
+
+    /* 6. Grids e Tabelas */
+    .cards-grid, .caixa-grid { grid-template-columns: 1fr !important; gap: 15px !important; }
+    .table-container { overflow-x: auto !important; }
+    table { min-width: 650px !important; }
+    .modal-caixa { width: 90% !important; margin: 15% auto !important; }
+}

@@ -1,6 +1,10 @@
 <?php
 session_start();
-if (!isset($_SESSION['usuario_logado'])) { header("Location: index.html"); exit; }
+if ($_SESSION['cargo_usuario'] != 'Administrador') {
+    // Se não for Administrador, joga para fora imediatamente
+    header("Location: servicos.php");
+    exit;
+}
 require_once 'conexao.php';
 
 // Se o ficheiro recebeu um ID válido pelo link...

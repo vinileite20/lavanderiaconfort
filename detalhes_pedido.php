@@ -26,6 +26,7 @@ $texto_estado = ($pedido['metodo_pagamento'] != 'Pendente') ? 'Pago' : 'Pendente
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Pedido</title>
     <link rel="stylesheet" href="style.css">
     <style>

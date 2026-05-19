@@ -29,6 +29,7 @@ $texto_termo = "Declaro estar ciente e de acordo com todas as respostas acima. A
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recibo #<?php echo str_pad($pedido['id'], 4, "0", STR_PAD_LEFT); ?></title>
     <style>
         /* AJUSTES PARA IMPRESSORA PORTÁTIL 58mm (MPT-2) */
