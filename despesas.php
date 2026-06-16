@@ -36,7 +36,7 @@ $resultado = $conexao->query("SELECT * FROM despesas ORDER BY data_despesa DESC"
         ?>
         <div class="sidebar" id="menuSidebar">
             <div class="sidebar-logo">
-                <img src="logo.png" alt="Lavanderia" style="max-width: 140px; height: auto;">
+              <img src="marca.jpg.png" alt="Lavanderia Confort" style="max-width: 140px; height: auto;">
                 <button class="btn-menu-mobile" onclick="abrirMenuMobile()">
                     <i class="fa-solid fa-bars"></i>
                 </button>

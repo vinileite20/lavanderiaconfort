@@ -6,15 +6,16 @@ require_once 'conexao.php';
 $ehAdmin = ($_SESSION['cargo_usuario'] == 'Administrador');
 $podeEditar = ($_SESSION['pode_editar'] == 'Sim' || $ehAdmin);
 
-// Consultas do Banco de Dados
-$sql_faturamento = "SELECT SUM(valor) AS total FROM pedidos";
+// Consultas para os cards (Faturamento e Totais)
+$sql_faturamento = "SELECT SUM(valor) AS total FROM pedidos WHERE metodo_pagamento != 'Pendente'";
 $faturamento = $conexao->query($sql_faturamento)->fetch_assoc()['total'] ?? 0;
 $faturamento_formatado = number_format($faturamento, 2, ',', '.');
 
 $total_pedidos = $conexao->query("SELECT COUNT(id) AS qtd FROM pedidos")->fetch_assoc()['qtd'];
 $total_clientes = $conexao->query("SELECT COUNT(id) AS qtd FROM clientes")->fetch_assoc()['qtd'];
-$total_fila = $conexao->query("SELECT COUNT(id) AS qtd FROM pedidos WHERE status IN ('Esperando', 'Lavando')")->fetch_assoc()['qtd'];
+$total_fila = $conexao->query("SELECT COUNT(id) AS qtd FROM pedidos WHERE status IN ('Esperando', 'Lavando', 'Secando')")->fetch_assoc()['qtd'];
 
+// Consulta da tabela de últimos pedidos
 $sql_pedidos = "SELECT p.id, c.nome AS cliente_nome, p.data_criacao, p.valor, p.status, p.recebedor, p.metodo_pagamento 
                 FROM pedidos p JOIN clientes c ON p.id_cliente = c.id ORDER BY p.data_criacao DESC LIMIT 10";
 $resultado_tabela = $conexao->query($sql_pedidos);
@@ -26,7 +27,7 @@ $resultado_tabela = $conexao->query($sql_pedidos);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel - Lavanderia</title>
-   <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .modal-fundo { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); }
@@ -34,42 +35,62 @@ $resultado_tabela = $conexao->query($sql_pedidos);
         .modal-fechar { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; margin-top: -10px; }
         .modal-fechar:hover { color: #333; }
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .input-group select, .input-group input { width: 100%; padding: 12px; border: 2px solid #e1e1e1; border-radius: 8px; outline: none; box-sizing: border-box; }
     </style>
 </head>
 <body style="display: block;">
 
     <div class="dashboard-container">
-        <?php $pagina_atual = basename($_SERVER['PHP_SELF']); ?>
-        <div class="sidebar">
-            <div class="sidebar-logo"><img src="logo.png" alt="Lavanderia" style="max-width: 160px; height: auto;"></div>
-            <a href="painel.php" class="menu-item <?php echo ($pagina_atual == 'painel.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-house"></i> Tela Inicial</a>
-            <a href="fila.php" class="menu-item <?php echo ($pagina_atual == 'fila.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-list-ol"></i> Fila de Produção</a>
-            <a href="novo_pedido.php" class="menu-item <?php echo ($pagina_atual == 'novo_pedido.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-file-lines"></i> Novo Pedido</a>
-            <a href="clientes.php" class="menu-item <?php echo ($pagina_atual == 'clientes.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-users"></i> Clientes</a>
-            <a href="servicos.php" class="menu-item <?php echo ($pagina_atual == 'servicos.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-tag"></i> Serviços</a>
+        
+        <!-- FUNDO ESCURO DO MENU MOBILE -->
+        <div class="fundo-escuro-menu" id="fundoMenu" onclick="fecharMenuMobile()"></div>
+
+        <!-- MENU LATERAL -->
+        <?php $pagina_atual = 'painel.php'; ?>
+        <div class="sidebar" id="menuSidebar">
+            <div class="sidebar-logo">
+             <img src="marca.jpg.png" alt="Lavanderia Confort" style="max-width: 140px; height: auto;">
+                <!-- Botão X que só aparece no celular/tablet -->
+                <button class="btn-fechar-menu" onclick="fecharMenuMobile()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <a href="painel.php" class="menu-item ativo"><i class="fa-solid fa-house"></i> Tela Inicial</a>
+            <a href="fila.php" class="menu-item"><i class="fa-solid fa-list-ol"></i> Fila de Produção</a>
+            <a href="novo_pedido.php" class="menu-item"><i class="fa-solid fa-file-lines"></i> Novo Pedido</a>
+            <a href="clientes.php" class="menu-item"><i class="fa-solid fa-users"></i> Clientes</a>
+            <a href="servicos.php" class="menu-item"><i class="fa-solid fa-tag"></i> Serviços</a>
+            
             <?php if ($ehAdmin): ?>
                 <a href="funcionarios.php" class="menu-item"><i class="fa-solid fa-id-card"></i> Funcionários</a>
                 <a href="financeiro.php" class="menu-item"><i class="fa-solid fa-chart-line"></i> Financeiro</a>
             <?php endif; ?>
+            
             <div style="flex-grow: 1;"></div>
+            <a href="perfil.php" class="menu-item" style="border-top: 1px solid #e2e8f0;"><i class="fa-solid fa-user-gear"></i> Meu Perfil</a>
             <a href="logout.php" class="menu-item" style="color: #d32f2f;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
         </div>
 
+        <!-- CONTEÚDO PRINCIPAL -->
         <div class="main-content">
             <div class="top-bar">
+                <!-- Botão Hamburguer (Só aparece no celular/tablet) -->
+                <button class="btn-menu-mobile" onclick="abrirMenuMobile()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                
                 <h2>Visão Geral</h2>
+                
                 <div class="user-info">
                     <i class="fa-solid fa-circle-user"></i> Olá, <?php echo $_SESSION['usuario_logado']; ?> 
-                    <span style="font-size: 12px; color: #64748b; margin-left: 5px;">(<?php echo $_SESSION['cargo_usuario']; ?>)</span>
                 </div>
             </div>
 
+            <!-- CARDS INTELIGENTES -->
             <div class="cards-grid">
                 <?php if ($ehAdmin): ?>
                 <div class="summary-card">
                     <div class="card-header"><span>Faturamento Total</span><div class="card-icon icon-purple"><i class="fa-solid fa-wallet"></i></div></div>
                     <div class="card-value">R$ <?php echo $faturamento_formatado; ?></div>
-                    <div class="card-trend trend-up"><i class="fa-solid fa-arrow-trend-up"></i> Acumulado</div>
                 </div>
                 <?php endif; ?>
 
@@ -90,6 +111,7 @@ $resultado_tabela = $conexao->query($sql_pedidos);
                 <?php endif; ?>
             </div>
 
+            <!-- TABELA DE ÚLTIMOS PEDIDOS -->
             <div class="table-container">
                 <div class="table-header">
                     <h3>Últimos Pedidos</h3>
@@ -117,50 +139,39 @@ $resultado_tabela = $conexao->query($sql_pedidos);
 
                                 $classeStatus = 'status-esperando';
                                 $textoStatus = 'Na Fila'; 
-                                
-                                if ($status_banco == 'Lavando' || $status_banco == 'Secando') { 
-                                    $classeStatus = 'status-lavando'; $textoStatus = 'Lavando';
-                                } elseif ($status_banco == 'Lavado') { 
-                                    $classeStatus = 'status-lavado'; $textoStatus = 'Aguardando Recolha'; 
-                                } elseif ($status_banco == 'Entregue') {
-                                    $classeStatus = 'status-lavado'; $textoStatus = 'Finalizado'; 
-                                }
+                                if ($status_banco == 'Lavando' || $status_banco == 'Secando') { $classeStatus = 'status-lavando'; $textoStatus = 'Lavando'; } 
+                                elseif ($status_banco == 'Lavado') { $classeStatus = 'status-lavado'; $textoStatus = 'Aguardando Recolha'; } 
+                                elseif ($status_banco == 'Entregue') { $classeStatus = 'status-lavado'; $textoStatus = 'Finalizado'; }
 
                                 echo "<tr>";
-                                echo "<td>";
-                                // NÚMERO DO PEDIDO CLICÁVEL
-                                echo "<a href='detalhes_pedido.php?id=" . $pedido['id'] . "' style='color: #0284c7; text-decoration: none; font-weight: bold; font-size: 15px;'>#" . str_pad($pedido['id'], 4, "0", STR_PAD_LEFT) . "</a>";
+                                echo "<td><a href='detalhes_pedido.php?id=" . $pedido['id'] . "' style='color: #0284c7; text-decoration: none; font-weight: bold;'>#" . str_pad($pedido['id'], 4, "0", STR_PAD_LEFT) . "</a>";
+                                echo "<a href='imprimir_recibo.php?id=" . $pedido['id'] . "' target='_blank' style='color: #4b5563; margin-left: 15px;'><i class='fa-solid fa-print'></i></a>";
                                 
-                                // BOTÃO DE IMPRESSORA (Todos veem)
-                                echo "<a href='imprimir_recibo.php?id=" . $pedido['id'] . "' target='_blank' style='color: #4b5563; margin-left: 15px; text-decoration: none;' title='Imprimir Recibo'><i class='fa-solid fa-print'></i></a>";
-                                
-                                // BOTÃO DE EXCLUIR/CANCELAR (SÓ VEEM SE TIVEREM PERMISSÃO)
-                                if ($podeEditar) {
-                                    echo "<a href='excluir_pedido.php?id=" . $pedido['id'] . "' style='color: #ef4444; margin-left: 15px; text-decoration: none;' title='Cancelar/Excluir Pedido' onclick='return confirm(\"Tem certeza que deseja apagar este pedido? O valor sairá do caixa.\")'><i class='fa-solid fa-trash-can'></i></a>";
+                                // SOMENTE ADMINISTRADOR PODE APAGAR PEDIDOS
+                                if ($ehAdmin) { 
+                                    echo "<a href='excluir_pedido.php?id=" . $pedido['id'] . "' style='color: #ef4444; margin-left: 15px;' onclick='return confirm(\"Apagar pedido?\")'><i class='fa-solid fa-trash-can'></i></a>"; 
                                 }
                                 
                                 echo "</td>";
-
                                 echo "<td><strong>" . $pedido['cliente_nome'] . "</strong></td>";
                                 echo "<td>" . $dataFormatada . "</td>";
                                 
                                 if ($metodo_pag == 'Pendente' && $status_banco != 'Entregue') {
-                                    echo "<td style='color: #ef4444; font-weight: bold;'>R$ " . $valorFormatado . " <span style='font-size:10px; display:block; color:#dc2626;'>[A RECEBER]</span></td>";
+                                    echo "<td style='color: #ef4444; font-weight: bold;'>R$ " . $valorFormatado . " <span style='font-size:10px; display:block;'>[A RECEBER]</span></td>";
                                 } else {
                                     echo "<td style='color: #16a34a; font-weight: bold;'>R$ " . $valorFormatado . "</td>";
                                 }
                                 
                                 echo "<td style='text-align: center;'><span class='status " . $classeStatus . "'>" . $textoStatus . "</span></td>";
-                                
                                 echo "<td style='text-align: center;'>";
                                 if ($status_banco == 'Esperando') {
-                                    echo "<a href='mudar_status.php?id=" . $pedido['id'] . "' style='display: inline-block; background-color: #0284c7; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 13px; font-weight: bold;'><i class='fa-solid fa-play'></i> Lavar</a>";
+                                    echo "<a href='mudar_status.php?id=" . $pedido['id'] . "' style='background-color: #0284c7; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 13px;'><i class='fa-solid fa-play'></i> Lavar</a>";
                                 } elseif ($status_banco == 'Lavando' || $status_banco == 'Secando') {
-                                    echo "<a href='concluir_pedido.php?id=" . $pedido['id'] . "' style='display: inline-block; background-color: #16a34a; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 13px; font-weight: bold;'><i class='fa-brands fa-whatsapp'></i> Avisar</a>";
+                                    echo "<a href='concluir_pedido.php?id=" . $pedido['id'] . "' style='background-color: #16a34a; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 13px;'><i class='fa-brands fa-whatsapp'></i> Avisar</a>";
                                 } elseif ($status_banco == 'Lavado') {
-                                    echo "<button onclick='abrirModalEntrega(" . $pedido['id'] . ", \"" . addslashes($pedido['cliente_nome']) . "\", \"" . $metodo_pag . "\")' style='background-color: #f59e0b; color: white; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold;'><i class='fa-solid fa-hand-holding-hand'></i> Entregar Roupa</button>";
+                                    echo "<button onclick='abrirModalEntrega(" . $pedido['id'] . ", \"" . addslashes($pedido['cliente_nome']) . "\", \"" . $metodo_pag . "\")' style='background-color: #f59e0b; color: white; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 13px;'><i class='fa-solid fa-hand-holding-hand'></i> Entregar</button>";
                                 } elseif ($status_banco == 'Entregue') {
-                                    echo "<span style='color: #666; font-size: 13px; font-weight: bold;'><i class='fa-solid fa-check'></i> Recebido por: <span style='color: #333;'>" . $pedido['recebedor'] . "</span></span>";
+                                    echo "<span style='color: #666; font-size: 13px;'><i class='fa-solid fa-check'></i> " . $pedido['recebedor'] . "</span>";
                                 }
                                 echo "</td></tr>";
                             }
@@ -174,6 +185,7 @@ $resultado_tabela = $conexao->query($sql_pedidos);
         </div> 
     </div> 
 
+    <!-- JANELA FLUTUANTE PARA REGISTRAR ENTREGA -->
     <div id="janelaEntrega" class="modal-fundo">
         <div class="modal-caixa">
             <span class="modal-fechar" onclick="fecharModalEntrega()">&times;</span>
@@ -185,7 +197,7 @@ $resultado_tabela = $conexao->query($sql_pedidos);
                 
                 <div class="input-group" id="grupoPagamentoModal" style="margin-bottom: 15px; display: none;">
                     <label style="font-weight: bold; margin-bottom: 5px; display: block; color: #dc2626;">Forma de Pagamento (Recebendo Agora):</label>
-                    <select name="metodo_pagamento" id="metodoPagamentoModal" style="width: 100%; padding: 12px; border: 2px solid #e1e1e1; border-radius: 8px; outline: none;">
+                    <select name="metodo_pagamento" id="metodoPagamentoModal">
                         <option value="Dinheiro">Dinheiro</option>
                         <option value="Pix">Pix</option>
                         <option value="Cartão">Cartão</option>
@@ -194,7 +206,7 @@ $resultado_tabela = $conexao->query($sql_pedidos);
 
                 <div class="input-group">
                     <label style="font-weight: bold; margin-bottom: 5px; display: block;">Quem está retirando as roupas?</label>
-                    <input type="text" name="recebedor" placeholder="Ex: O próprio, Maria (Esposa)..." required style="width: 100%; padding: 12px; border: 2px solid #e1e1e1; border-radius: 8px; outline: none;">
+                    <input type="text" name="recebedor" placeholder="Ex: O próprio, Maria (Esposa)..." required>
                 </div>
                 
                 <button type="submit" style="width: 100%; margin-top: 20px; background: #f59e0b; color: white; padding: 12px; border: none; border-radius: 5px; font-weight: bold; font-size: 15px; cursor: pointer;">Confirmar Entrega e Fechar</button>
@@ -202,8 +214,32 @@ $resultado_tabela = $conexao->query($sql_pedidos);
         </div>
     </div>
 
+    <!-- JAVASCRIPT: MOTOR DA PÁGINA E DO MENU -->
     <script>
-        // JS DO MENU MOBILE
+        // MOTOR DA ENTREGA
+        function abrirModalEntrega(id, nome, metodoPagamento) {
+            document.getElementById('idPedidoModal').value = id;
+            document.getElementById('nomeClienteModal').innerText = nome;
+            
+            let grupoPagamento = document.getElementById('grupoPagamentoModal');
+            let selectPagamento = document.getElementById('metodoPagamentoModal');
+            
+            if (metodoPagamento === 'Pendente') {
+                grupoPagamento.style.display = 'block';
+                selectPagamento.setAttribute('required', 'required');
+            } else {
+                grupoPagamento.style.display = 'none';
+                selectPagamento.removeAttribute('required');
+            }
+            
+            document.getElementById('janelaEntrega').style.display = 'block';
+        }
+        
+        function fecharModalEntrega() {
+            document.getElementById('janelaEntrega').style.display = 'none';
+        }
+
+        // MOTOR DO MENU MOBILE
         function abrirMenuMobile() {
             document.getElementById('menuSidebar').classList.add('aberto');
             document.getElementById('fundoMenu').classList.add('ativo');

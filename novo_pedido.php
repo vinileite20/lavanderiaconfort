@@ -44,7 +44,7 @@ $json_servicos = json_encode($lista_servicos);
         ?>
         <div class="sidebar" id="menuSidebar">
             <div class="sidebar-logo">
-                <img src="logo.png" alt="Lavanderia" style="max-width: 140px; height: auto;">
+             <img src="marca.jpg.png" alt="Lavanderia Confort" style="max-width: 140px; height: auto;">
                 <button class="btn-fechar-menu" onclick="fecharMenuMobile()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
@@ -60,8 +60,11 @@ $json_servicos = json_encode($lista_servicos);
             <?php endif; ?>
             
             <div style="flex-grow: 1;"></div>
-            <a href="logout.php" class="menu-item" style="color: #d32f2f;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
-        </div>
+    
+    <a href="perfil.php" class="menu-item" style="border-top: 1px solid #e2e8f0;"><i class="fa-solid fa-user-gear"></i> Meu Perfil</a>
+    
+    <a href="logout.php" class="menu-item" style="color: #d32f2f;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+</div>
 
         <div class="main-content">
             <div class="top-bar">

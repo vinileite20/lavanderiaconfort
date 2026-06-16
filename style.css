@@ -375,114 +375,148 @@ table td {
    ========================================================= */
 
 /* Esconde os botões do celular quando estiver no Computador */
+/* =========================================================
+   MENU GAVETA - APARECE SÓ NO TABLET E CELULAR
+   ========================================================= */
+
+/* 1. Esconde os botões no Computador */
 .btn-menu-mobile, .btn-fechar-menu, .fundo-escuro-menu {
     display: none;
 }
 
-@media (max-width: 768px) {
-    .dashboard-container {
+/* 2. Mostra e configura no Tablet e Celular (até 1024px) */
+@media (max-width: 1024px) {
+    
+    /* Obriga o botão de três risquinhos a aparecer */
+    .btn-menu-mobile {
         display: block !important;
+        background: none !important;
+        border: none !important;
+        font-size: 26px !important;
+        color: #334155 !important;
+        cursor: pointer !important;
+        padding: 5px 15px 5px 0 !important;
     }
 
-    /* 1. O Fundo Escuro que fica atrás do menu */
-    .fundo-escuro-menu {
-        display: none;
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: rgba(0,0,0,0.6);
-        z-index: 9998;
-    }
-    .fundo-escuro-menu.ativo {
-        display: block;
-    }
-
-    /* 2. O Menu Lateral (Fica escondido para fora da tela na esquerda) */
+    /* O Menu Lateral fica escondido na esquerda */
     .sidebar {
         position: fixed !important;
         top: 0 !important;
-        left: -300px !important; /* Escondido */
+        left: -320px !important; /* Esconde para fora da tela */
         width: 280px !important;
         height: 100% !important;
-        display: flex !important;
-        flex-direction: column !important;
-        background: #fff !important;
         z-index: 9999 !important;
-        transition: left 0.3s ease-in-out !important; /* Animação de deslizar */
-        border-right: 1px solid #e2e8f0 !important;
-        overflow-y: auto !important;
-        padding: 20px 15px !important;
-        box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+        transition: left 0.3s ease-in-out !important; /* Faz o deslize suave */
+        background: #fff !important;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.2) !important;
     }
-
-    /* Classe que o JavaScript vai usar para empurrar o menu pra dentro da tela */
+    
+    /* A classe que o JavaScript coloca para puxar o menu pra tela */
     .sidebar.aberto {
         left: 0 !important; 
     }
-
-    .sidebar-logo {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        margin-bottom: 30px !important;
-        width: 100%;
-    }
-
-    /* 3. Botões do Menu Mobile */
-    .btn-menu-mobile {
-        display: block;
-        background: none;
-        border: none;
-        font-size: 26px;
-        color: #334155;
-        cursor: pointer;
-        padding: 0 15px 0 0;
-    }
-
-    .btn-fechar-menu {
-        display: block;
-        background: none;
-        border: none;
-        font-size: 28px;
-        color: #94a3b8;
-        cursor: pointer;
-    }
-
-    /* 4. Organiza os links dentro do menu */
-    .menu-item {
-        flex-direction: row !important;
-        justify-content: flex-start !important;
-        padding: 15px !important;
-        margin-bottom: 5px !important;
-        font-size: 16px !important;
-        border-radius: 8px !important;
-    }
-
-    /* 5. Ajustes na Tela Principal */
-    .main-content {
-        width: 100% !important;
-        margin-left: 0 !important;
-        padding: 15px !important;
-        box-sizing: border-box !important;
-    }
-
-    .top-bar {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        height: auto !important;
-        margin-bottom: 20px !important;
-    }
-
-    .top-bar h2 { font-size: 20px; margin: 0; }
     
-    /* Esconde o nome do usuário no celular para economizar espaço no topo */
-    .user-info { display: none !important; }
+    /* O fundo escuro que fica atrás do menu */
+    .fundo-escuro-menu {
+        display: none;
+        position: fixed !important;
+        top: 0 !important; 
+        left: 0 !important; 
+        width: 100% !important; 
+        height: 100% !important;
+        background: rgba(0,0,0,0.6) !important;
+        z-index: 9998 !important;
+    }
+    
+    /* O fundo escuro aparece quando o menu abre */
+    .fundo-escuro-menu.ativo {
+        display: block !important;
+    }
 
-    /* 6. Grids e Tabelas */
-    .cards-grid, .caixa-grid { grid-template-columns: 1fr !important; gap: 15px !important; }
-    .table-container { overflow-x: auto !important; }
-    table { min-width: 650px !important; }
-    .modal-caixa { width: 90% !important; margin: 15% auto !important; }
+    /* Mostra o botão X de fechar dentro do menu */
+    .btn-fechar-menu {
+        display: block !important;
+    }
+}
+/* =========================================================
+   1. O LAYOUT LÍQUIDO (Adapta a qualquer tela automaticamente)
+   ========================================================= */
+
+/* A tela principal é flexível */
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden; /* Impede que a tela balance para os lados */
+}
+
+/* O conteúdo ocupa o que sobrar de espaço */
+.main-content {
+    flex: 1;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+
+/* =========================================================
+   2. A MÁGICA DOS CARTÕES (Auto-Fit)
+   ========================================================= */
+/* Essa é a regra de ouro: os cartões vão ter no mínimo 250px. 
+   Se a tela crescer, eles ficam lado a lado. Se a tela encolher, 
+   eles pulam para a linha de baixo sozinhos! */
+.cards-grid, .caixa-grid, .kanban-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* =========================================================
+   3. A PROTEÇÃO DAS TABELAS E BOTÕES
+   ========================================================= */
+/* Tabelas nunca quebram a tela, elas ganham rolagem de dedo */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+table {
+    width: 100%;
+    min-width: 700px; /* Se a tela for menor que 700px, cria a rolagem */
+    border-collapse: collapse;
+}
+
+/* A barra do topo se ajusta para não esmagar os títulos */
+.top-bar {
+    display: flex;
+    flex-wrap: wrap; /* Se não couber, joga o resto pra baixo */
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+/* =========================================================
+   4. O GATILHO PARA TELAS MENORES (Tablets e Celulares)
+   ========================================================= */
+/* Se a tela for menor que 1024px (Tablets, Celulares em pé ou deitados), 
+   o menu lateral vira a gaveta escondida. */
+@media (max-width: 1024px) {
+    .sidebar {
+        position: fixed !important;
+        top: 0; left: -300px; /* Escondido fora da tela */
+        width: 280px !important;
+        height: 100%;
+        z-index: 9999;
+        transition: 0.3s ease-in-out;
+    }
+    .sidebar.aberto { left: 0 !important; }
+    
+    .fundo-escuro-menu.ativo { display: block !important; }
+    .fundo-escuro-menu.ativo { display: block; }
 }

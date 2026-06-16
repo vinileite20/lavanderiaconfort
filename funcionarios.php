@@ -43,14 +43,12 @@ $resultado = $conexao->query("SELECT * FROM funcionarios ORDER BY nome ASC");
 
         <?php 
             $pagina_atual = basename($_SERVER['PHP_SELF']); 
-            $ehAdmin = ($_SESSION['cargo_usuario'] == 'Administrador');
+            $ehAdmin = (isset($_SESSION['cargo_usuario']) && $_SESSION['cargo_usuario'] == 'Administrador');
         ?>
         <div class="sidebar" id="menuSidebar">
             <div class="sidebar-logo">
-                <img src="logo.png" alt="Lavanderia" style="max-width: 140px; height: auto;">
-                <button class="btn-menu-mobile" onclick="abrirMenuMobile()">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+               <img src="marca.jpg.png" alt="Lavanderia Confort" style="max-width: 140px; height: auto;">
+                <button class="btn-fechar-menu" onclick="fecharMenuMobile()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <a href="painel.php" class="menu-item <?php echo ($pagina_atual == 'painel.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-house"></i> Tela Inicial</a>
@@ -65,11 +63,14 @@ $resultado = $conexao->query("SELECT * FROM funcionarios ORDER BY nome ASC");
             <?php endif; ?>
             
             <div style="flex-grow: 1;"></div>
+            <a href="perfil.php" class="menu-item <?php echo ($pagina_atual == 'perfil.php') ? 'ativo' : ''; ?>" style="border-top: 1px solid #e2e8f0;"><i class="fa-solid fa-user-gear"></i> Meu Perfil</a>
             <a href="logout.php" class="menu-item" style="color: #d32f2f;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
         </div>
-
         <div class="main-content">
             <div class="top-bar"><h2>Gestão de Equipe</h2></div>
+            <button class="btn-menu-mobile" onclick="abrirMenuMobile()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
 
             <div class="table-container">
                 <div class="table-header">
@@ -146,7 +147,7 @@ $resultado = $conexao->query("SELECT * FROM funcionarios ORDER BY nome ASC");
     </div>
 
     <script>
-        // JS DO MENU MOBILE
+        // MOTOR DO MENU MOBILE
         function abrirMenuMobile() {
             document.getElementById('menuSidebar').classList.add('aberto');
             document.getElementById('fundoMenu').classList.add('ativo');

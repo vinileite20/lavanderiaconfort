@@ -33,18 +33,16 @@ $resultado = $conexao->query($sql);
             $pagina_atual = basename($_SERVER['PHP_SELF']); 
             $ehAdmin = ($_SESSION['cargo_usuario'] == 'Administrador');
         ?>
-       <div class="fundo-escuro-menu" id="fundoMenu" onclick="fecharMenuMobile()"></div>
+      <div class="fundo-escuro-menu" id="fundoMenu" onclick="fecharMenuMobile()"></div>
 
         <?php 
             $pagina_atual = basename($_SERVER['PHP_SELF']); 
-            $ehAdmin = ($_SESSION['cargo_usuario'] == 'Administrador');
+            $ehAdmin = (isset($_SESSION['cargo_usuario']) && $_SESSION['cargo_usuario'] == 'Administrador');
         ?>
         <div class="sidebar" id="menuSidebar">
             <div class="sidebar-logo">
-                <img src="logo.png" alt="Lavanderia" style="max-width: 140px; height: auto;">
-                <button class="btn-menu-mobile" onclick="abrirMenuMobile()">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+                <img src="marca.jpg.png" alt="Lavanderia Confort" style="max-width: 140px; height: auto;">
+                <button class="btn-fechar-menu" onclick="fecharMenuMobile()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <a href="painel.php" class="menu-item <?php echo ($pagina_atual == 'painel.php') ? 'ativo' : ''; ?>"><i class="fa-solid fa-house"></i> Tela Inicial</a>
@@ -59,6 +57,7 @@ $resultado = $conexao->query($sql);
             <?php endif; ?>
             
             <div style="flex-grow: 1;"></div>
+            <a href="perfil.php" class="menu-item <?php echo ($pagina_atual == 'perfil.php') ? 'ativo' : ''; ?>" style="border-top: 1px solid #e2e8f0;"><i class="fa-solid fa-user-gear"></i> Meu Perfil</a>
             <a href="logout.php" class="menu-item" style="color: #d32f2f;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
         </div>
         <!-- FIM DO MENU LATERAL -->
@@ -67,6 +66,9 @@ $resultado = $conexao->query($sql);
             <div class="top-bar">
                 <h2>Gerenciar Clientes</h2>
             </div>
+            <button class="btn-menu-mobile" onclick="abrirMenuMobile()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
 
             <div class="table-container">
                 <div class="table-header">
@@ -123,8 +125,8 @@ $resultado = $conexao->query($sql);
     </div>
 
     <!-- SCRIPTS -->
-    <script>
-        // JS DO MENU MOBILE
+   <script>
+        // MOTOR DO MENU MOBILE
         function abrirMenuMobile() {
             document.getElementById('menuSidebar').classList.add('aberto');
             document.getElementById('fundoMenu').classList.add('ativo');
